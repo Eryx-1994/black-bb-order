@@ -7,71 +7,46 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig({
-  // ⚠️ 关键：设为相对路径，否则 iOS 添加到主屏幕后白屏
-  base: './',
+  base: '/black-bb-order/', // ← 关键修复
 
   plugins: [
     vue(),
     Inspector(),
-    traeBadgePlugin({
-      variant: 'dark',
-      position: 'bottom-right',
-      prodOnly: true,
-      clickable: true,
-      clickUrl: 'https://www.trae.ai/solo?showJoin=1',
-      autoTheme: true,
-      autoThemeTarget: '#app',
-    }),
-    // ✅ 新增 PWA 插件
+    traeBadgePlugin({ /* ... */ }),
     VitePWA({
       registerType: 'autoUpdate',
-      devOptions: {
-        enabled: false, // 开发环境不启用 PWA
-      },
+      devOptions: { enabled: false },
       manifest: {
-        name: '咖啡点单', // ← 替换为你自己的 App 名称
-        short_name: 'Coffee', // ← 短名称（主屏幕显示）
-        description: '您的专属咖啡店点单应用',
+        name: '黑奴小BB点餐系统',
+        short_name: 'BlackBB',
+        description: '黑奴小BB的点餐系统',
         theme_color: '#ffffff',
         background_color: '#ffffff',
-        display: 'standalone', // 全屏，无浏览器 UI
+        display: 'standalone',
         orientation: 'portrait',
-        scope: './',
-        start_url: './',
+        scope: '/black-bb-order/',   // ← 同步更新
+        start_url: '/black-bb-order/', // ← 同步更新
         icons: [
-          {
-            src: 'pwa-192x192.png',
-            sizes: '192x192',
-            type: 'image/png',
-          },
-          {
-            src: 'pwa-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-          },
+          { src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' },
+          { src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png' },
         ],
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,png,jpg,svg,ico}'],
         runtimeCaching: [
           {
-            urlPattern: /^https:\/\/trae-api-sg\.mchost\.guru\/.*\.(png|jpg|jpeg|svg)$/,
+            urlPattern: /^https:\/\/trae-api-sg\.mchost\.guru\/.*\.(png|jpg|jpeg| svg)$/,
             handler: 'CacheFirst',
             options: {
               cacheName: 'api-image-cache',
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 7 * 24 * 60 * 60, // 缓存 7 天
-              },
-            },
-          },
-        ],
-      },
-    }),
+              expiration: { maxEntries: 50, maxAgeSeconds: 7 * 24 * 60 * 60 }
+            }
+          }
+        ]
+      }
+    })
   ],
   resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'), // ✅ 定义 @ = src
-    },
-  },
+    alias: { '@': path.resolve(__dirname, './src') }
+  }
 })
