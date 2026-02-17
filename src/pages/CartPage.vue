@@ -26,7 +26,7 @@
         <h3 class="text-lg font-medium text-gray-500 mb-2">购物车是空的</h3>
         <p class="text-sm text-gray-400 mb-6">快去选购你喜欢的咖啡吧</p>
         <button
-          @click="$router.push('/menu')"
+          @click="$router.push('/')"
           class="bg-amber-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-amber-700 transition-colors"
         >
           去选购

@@ -41,7 +41,7 @@
 				</h3>
 				<p class="text-sm text-gray-400 mb-6">快去下单享受美味咖啡吧</p>
 				<button
-					@click="$router.push('/menu')"
+					@click="$router.push('/')"
 					class="bg-amber-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-amber-700 transition-colors"
 				>
 					去下单

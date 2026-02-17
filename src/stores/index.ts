@@ -183,7 +183,7 @@ export const useMainStore = defineStore('main', {
       const item = this.cart.find(cartItem => cartItem.id === productId && cartItem.size === size && cartItem.temperature === temperature);
       if (item) {
         if (quantity <= 0) {
-          this.removeFromCart(productId, size, temperature);
+          (this as any).removeFromCart(productId, size, temperature);
         } else {
           item.quantity = quantity;
         }
@@ -212,7 +212,7 @@ export const useMainStore = defineStore('main', {
       const order: Order = {
         id: `order_${Date.now()}`,
         items: [...this.cart],
-        total: this.cartTotalPrice,
+        total:  (this as any).cartTotalPrice,
         status: 'pending',
         createTime: new Date().toISOString(),
         deliveryType,
@@ -220,7 +220,7 @@ export const useMainStore = defineStore('main', {
       };
       
       this.orders.unshift(order);
-      this.clearCart();
+       (this as any).clearCart();
       
       return order;
     },
@@ -246,43 +246,42 @@ export const useMainStore = defineStore('main', {
   },
   
   persist: {
-    key: 'coffee_app_store', // 设置存储的键名
-    storage: localStorage, // 使用 localStorage 进行持久化存储
-    paths: ['cart', 'favorites', 'orders', 'user'] // 指定需要持久化的状态字段
+    key: 'coffee_app_store',
+    storage: localStorage,
   }
 });
 
 // 保持向后兼容的计算属性和方法（如果需要）
 export const cartActions = {
   addToCart: (product: any, quantity: number = 1, size?: string, temperature?: string) => {
-    const store = useMainStore();
+    const store:any = useMainStore();
     store.addToCart(product, quantity, size, temperature);
   },
   removeFromCart: (productId: string, size?: string, temperature?: string) => {
-    const store = useMainStore();
+    const store:any = useMainStore();
     store.removeFromCart(productId, size, temperature);
   },
   updateQuantity: (productId: string, quantity: number, size?: string, temperature?: string) => {
-    const store = useMainStore();
+    const store:any = useMainStore();
     store.updateCartItemQuantity(productId, quantity, size, temperature);
   },
   clearCart: () => {
-    const store = useMainStore();
+    const store:any = useMainStore();
     store.clearCart();
   },
   getCartItemCount: () => {
-    const store = useMainStore();
+    const store:any = useMainStore();
     return store.cartItemCount;
   },
   getCartTotal: () => {
-    const store = useMainStore();
+    const store:any = useMainStore();
     return store.cartTotalPrice;
   }
 };
 
 export const favoriteActions = {
   toggleFavorite: (productId: string) => {
-    const store = useMainStore();
+    const store:any = useMainStore();
     if (store.favorites.includes(productId)) {
       store.removeFavorite(productId);
     } else {
@@ -297,11 +296,11 @@ export const favoriteActions = {
 
 export const orderActions = {
   createOrder: (deliveryType: 'pickup' | 'delivery', address?: string) => {
-    const store = useMainStore();
+    const store:any = useMainStore();
     return store.createOrder(deliveryType, address);
   },
   updateOrderStatus: (orderId: string, status: any) => {
-    const store = useMainStore();
+    const store:any = useMainStore();
     store.updateOrderStatus(orderId, status);
   }
 };
