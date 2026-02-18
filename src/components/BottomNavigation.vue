@@ -56,7 +56,12 @@ const navItems = [
     label: 'BB的订单',
     icon: FileText
   },
-  
+  {
+    name: 'admin',
+    path: '/admin',
+    label: '上传菜单',
+    icon: FileText
+  },
 ]
 
 const cartItemCount = computed(() => cartActions.getCartItemCount())

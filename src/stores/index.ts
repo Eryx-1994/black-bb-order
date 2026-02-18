@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { fetchProductsFromApi } from '@/lib/productService'; // 导入产品服务
 
 // 商品接口
 export interface Product {
@@ -56,87 +57,9 @@ export const useMainStore = defineStore('main', {
     favorites: [] as string[],
     
     // 商品数据
-    products: [
-      {
-        id: '1',
-        name: '美式咖啡',
-        description: '经典美式咖啡，香醇浓郁，回味悠长',
-        price: 25,
-        image: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=classic%20american%20coffee%20in%20white%20cup%20on%20wooden%20table%20warm%20lighting%20coffee%20beans%20scattered&image_size=square',
-        category: '经典咖啡',
-        rating: 4.5,
-        isHot: true
-      },
-      {
-        id: '2',
-        name: '拿铁咖啡',
-        description: '香浓牛奶与咖啡的完美融合，口感丝滑',
-        price: 32,
-        image: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=latte%20coffee%20with%20milk%20foam%20art%20heart%20shape%20in%20ceramic%20cup%20warm%20brown%20background&image_size=square',
-        category: '奶咖系列',
-        rating: 4.8,
-        isHot: true
-      },
-      {
-        id: '3',
-        name: '卡布奇诺',
-        description: '浓郁咖啡配上绵密奶泡，层次丰富',
-        price: 30,
-        image: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=cappuccino%20coffee%20with%20thick%20milk%20foam%20cinnamon%20powder%20sprinkled%20on%20top%20cozy%20cafe%20atmosphere&image_size=square',
-        category: '奶咖系列',
-        rating: 4.6
-      },
-      {
-        id: '4',
-        name: '焦糖玛奇朵',
-        description: '香甜焦糖与浓郁咖啡的甜蜜邂逅',
-        price: 35,
-        image: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=caramel%20macchiato%20coffee%20with%20caramel%20drizzle%20whipped%20cream%20glass%20cup%20elegant%20presentation&image_size=square',
-        category: '特色饮品',
-        rating: 4.7,
-        isNew: true
-      },
-      {
-        id: '5',
-        name: '摩卡咖啡',
-        description: '巧克力与咖啡的浪漫组合，甜而不腻',
-        price: 38,
-        image: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=mocha%20coffee%20with%20chocolate%20shavings%20elegant%20presentation%20luxury%20feel%20bright%20interior&image_size=square',
-        category: '特色饮品',
-        rating: 4.9,
-        isHot: true
-      },
-      {
-        id: '6',
-        name: '蓝山咖啡',
-        description: '来自牙买加的顶级咖啡豆，酸味和香味均衡',
-        price: 45,
-        image: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=blue%20mountain%20coffee%20premium%20quality%20in%20porcelain%20cup%20elegant%20presentation%20natural%20lighting&image_size=square',
-        category: '精品单品',
-        rating: 4.9,
-        isNew: true
-      },
-      {
-        id: '7',
-        name: '冰滴咖啡',
-        description: '低温长时间萃取，口感顺滑甘甜',
-        price: 36,
-        image: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=cold%20brew%20coffee%20in%20glass%20jug%20iced%20coffee%20refreshing%20summer%20drink&image_size=square',
-        category: '冷萃系列',
-        rating: 4.7,
-        isHot: false
-      },
-      {
-        id: '8',
-        name: '皇家咖啡',
-        description: '顶级蓝山咖啡加入特调酒液，火焰燃烧呈现',
-        price: 58,
-        image: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=flambé%20coffee%20royal%20coffee%20with%20flames%20luxury%20presentation%20evening%20setting&image_size=square',
-        category: '特色饮品',
-        rating: 5.0,
-        isNew: true
-      }
-    ] as Product[],
+    products: [] as Product[], // 初始化为空数组，等待 API 加载
+    loadingProducts: false, // 新增：加载状态
+    productsError: null as string | null, // 新增：错误状态
   }),
   
   getters: {
@@ -157,6 +80,34 @@ export const useMainStore = defineStore('main', {
   },
   
   actions: {
+    // 加载产品数据
+    async loadProducts() {
+      this.loadingProducts = true;
+      this.productsError = null;
+      try {
+        const fetchedProducts = await fetchProductsFromApi();
+        this.products = fetchedProducts;
+      } catch (error: any) {
+        this.productsError = error.message || '加载产品数据失败';
+        console.error('加载产品数据失败:', error);
+        // 在开发阶段，我们可以保留一些默认数据以防 API 出错
+        this.products = [
+          {
+            id: '1',
+            name: '美式咖啡',
+            description: '经典黑咖啡，浓郁香醇',
+            price: 28,
+            image: 'https://via.placeholder.com/150',
+            category: '咖啡',
+            rating: 4.5,
+            isHot: true
+          }
+        ];
+      } finally {
+        this.loadingProducts = false;
+      }
+    },
+
     // 添加商品到购物车
     addToCart(product: Product, quantity: number = 1, size?: string, temperature?: string) {
       const existingItem = this.cart.find(item => item.id === product.id && item.size === size && item.temperature === temperature);

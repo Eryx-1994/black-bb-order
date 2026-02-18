@@ -56,9 +56,13 @@
 
     <!-- 商品列表 -->
     <div class="px-4 py-4">
-      <div v-if="filteredProducts.length === 0" class="text-center py-12">
+      <div v-if="filteredProducts.length === 0 && !mainStore.loadingProducts" class="text-center py-12">
         <Coffee :size="48" class="text-gray-300 mx-auto mb-4" />
         <p class="text-gray-500">暂无相关商品</p>
+      </div>
+      
+      <div v-else-if="mainStore.loadingProducts" class="text-center py-12">
+        <p class="text-gray-500">正在加载商品...</p>
       </div>
       
       <div v-else class="grid grid-cols-2 gap-4">
@@ -122,17 +126,19 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { 
   ArrowLeft, ShoppingCart, Search, Coffee, Heart, Star, Plus
 } from 'lucide-vue-next'
-import { store, cartActions, favoriteActions } from '@/stores'
+import { store, cartActions, favoriteActions, useMainStore } from '@/stores'
 import { toast } from 'vue-sonner'
 
-const router = useRouter()
 const route = useRoute()
 const searchQuery = ref('')
 const selectedCategory = ref('')
+
+// 获取主 store 实例
+const mainStore = useMainStore()
 
 // 购物车商品数量
 const cartItemCount = computed(() => cartActions.getCartItemCount())
@@ -159,8 +165,13 @@ const filteredProducts = computed(() => {
   return products
 })
 
-// 页面初始化
-onMounted(() => {
+// 页面初始化 - 仅在首次加载时
+onMounted(async () => {
+  // 如果路由守卫没有自动加载数据，这里可以作为一个后备
+  if (mainStore.products.length === 0) {
+    await mainStore.loadProducts()
+  }
+  
   // 如果从首页传入了分类参数，设置默认选中的分类
   if (route.query.category) {
     selectedCategory.value = route.query.category as string
@@ -169,7 +180,8 @@ onMounted(() => {
 
 // 导航到商品详情
 const goToProduct = (productId: string) => {
-  router.push({ name: 'product-detail', params: { id: productId } })
+  // 这里可以添加产品ID到路由，或者打开详细信息弹窗
+  console.log("Go to product:", productId)
 }
 
 // 快速添加到购物车
