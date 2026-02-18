@@ -25,7 +25,7 @@ export const fetchProductsFromApi = async (): Promise<Product[]> => {
     return result.data.map((item: any) => ({
       id: item.id || item._id || Math.random().toString(36).substring(7),
       name: item.name || item.title || '未知商品',
-      description: item.description || item.desc || '',
+      description: item.description || item.note || '',
       price: item.price ? parseFloat(item.price) : 0,
       image: item.image || item.imageUrl || item.img || '',
       category: item.category || item.type || '其他',
