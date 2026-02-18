@@ -1,1 +1,0 @@
-if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/black-bb-order/sw.js', { scope: '/black-bb-order/' })})}

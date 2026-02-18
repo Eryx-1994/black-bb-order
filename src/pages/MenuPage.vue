@@ -6,7 +6,7 @@
         <!-- <button @click="$router.go(-1)" class="p-2">
           <ArrowLeft :size="20" class="text-gray-600" />
         </button> -->
-        <h1 class="text-lg font-bold text-gray-800">菜单</h1>
+        <h1 class="text-lg font-bold text-gray-800">小黑奴BB的菜单</h1>
         <button @click="$router.push('/cart')" class="relative p-2">
           <ShoppingCart :size="20" class="text-gray-600" />
           <div

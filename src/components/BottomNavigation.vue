@@ -41,19 +41,19 @@ const navItems = [
   {
     name: 'menu',
     path: '/',
-    label: '菜单',
+    label: 'BB的菜单',
     icon: Coffee
   },
   {
     name: 'cart',
     path: '/cart',
-    label: '购物车',
+    label: 'BB的购物车',
     icon: ShoppingCart
   },
   {
     name: 'orders',
     path: '/orders',
-    label: '订单',
+    label: 'BB的订单',
     icon: FileText
   },
   
